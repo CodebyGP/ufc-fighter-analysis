@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <style>
+    body {
+      background-image: url('https://dmxg5wxfqgb4u.cloudfront.net/2018-10/GettyImages-1046863788_1.jpg?VersionId=JzngoF2P1aHp2i9NSx8eRtHDLfd1GaC.');
+      background-size: cover;
+      background-position: center center;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #333;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 36px;
+      margin: 0;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 20px;
+    }
+
+    .weight-class {
+      flex: 0 0 calc(25% - 20px);
+      margin: 10px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 8px;
+      text-align: center;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .weight-class:hover {
+      transform: scale(1.05); 
+    }
+
+    .weight-class h2 {
+      font-size: 24px;
+      margin: 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #FFD700;
+    }
+
+    .rankings {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #FFD700;
+    }
+
+    .champion {
+      font-weight: bold;
+    }
+
+    .title-and-tabs {
+      text-align: center;
+    }
+
+    .title-and-tabs a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+
+    .title-and-tabs a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="title-and-tabs">UFC Rankings</h1>
+    <ul class="title-and-tabs">
+      <li><a href="/">Homepage</a></li>
+      <li><a href="/rankings">Rankings</a></li> <!-- Link to the rankings page -->
+    </ul>
+  </header>
+
+  <div class="container">
+    {% for weight_class, rankings in rankings_dict.items() %}
+    <div class="weight-class">
+      <h2>{{ weight_class }}</h2>
+      <div class="rankings">
+        {% set rankings_list = rankings.split('\n') %}
+        {% for rank in rankings_list %}
+          {% if 'Champion' in rank %}
+            <p class="champion">{{ rank }}</p>
+          {% else %}
+            <p>{{ rank }}</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UFC Fighter Comparison Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://dmxg5wxfqgb4u.cloudfront.net/2018-10/GettyImages-1046863788_1.jpg?VersionId=JzngoF2P1aHp2i9NSx8eRtHDLfd1GaC.');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .error-message {
+            color: red; 
+            font-weight: bold; 
+            padding: 10px; 
+            background-color: rgba(255, 255, 255, 0.8); 
+            border-radius: 5px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+            text-align: center; 
+            margin-bottom: 20px; 
+        }
+
+        .fighter-image {
+            max-width: 300px;
+            max-height: 300px;
+            margin: 10px;
+        }
+
+        .stats-section {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f5f5f5;
+            max-width: 1200px;
+        }
+
+        .fighter-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: large;
+        }
+
+        .fighter-info img {
+            margin-right: 20px;
+        }
+        .fighter-info img:hover {
+            transform: scale(1.05);
+        }
+
+        .info-section {
+            background-color: rgba(255, 255, 255, 0.8); 
+            padding: 10px; 
+            border-radius: 5px; 
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+
+            height: 270px;
+            width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .advantages-section {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            color: #333; 
+            font-size: 20px;
+        }
+
+        .advantages-section h3 {
+            color: #007bff; 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+        }
+
+        .advantages-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .advantages-section li {
+            margin: 10px 0; 
+            display: flex;
+            justify-content: space-between; 
+            align-items: center; 
+        }
+
+        .advantages-section .advantage-label {
+            font-weight: bold; 
+        }
+
+        .advantages-section .advantage-value {
+            font-weight: normal; 
+            color: #555; 
+        }
+
+        h1 {
+            margin: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        form label{
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5) ;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+       
+        .progress-ring-container {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin-top: 10px;
+        }
+
+       
+        .progress-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+        .custom-form {
+            background-color: black;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .form-label {
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .custom-input {
+            padding: 10px;
+            margin: 5px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .custom-input::placeholder {
+            color: #666;
+        }
+
+        .custom-input:focus {
+            outline: none;
+            border-color: #0056b3;
+            background-color: #fff;
+        }
+
+        .custom-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.2s;
+        }
+
+        .custom-button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>UFC Comparison Tool</h1>
+        <ul class="tabs">
+            <li><a href="/">Homepage</a></li>
+            <li><a href="/rankings">Rankings</a></li> <!-- Link to the rankings page -->
+        </ul>
+    </header>
+
+    {% if error_message %}
+    <div class="error-message">
+        {{ error_message }}
+    </div>
+    {% endif %}
+
+    
+    <form method="post" class="custom-form">
+        <label for="fighter_name1">Enter Fighter Name 1:</label>
+        <input type="text" id="fighter_name1" name="fighter_name1" required class="custom-input">
+        <label for="fighter_name2">Enter Fighter Name 2:</label>
+        <input type="text" id="fighter_name2" name="fighter_name2" required class="custom-input">
+        <button type="submit" class="custom-button">Compare Fighters</button>
+    </form>
+
+    {% if fighter_stats[0] and fighter_stats[1] %}
+    <div class="fighter-info">
+        <div class="fighter-section">
+            <img src="{{ fighter_image_urls[0] }}" alt="Fighter 1 Image" class="fighter-image">
+        </div>
+        <div class="info-section">
+            <h2>{{ fighter_stats[0]['fighter_name'] }}</h2>
+            <p>Age: {{ fighter_stats[0]['age'] }}</p>
+            <p>Reach: {{ fighter_stats[0]['Reach'] }}"</p>
+            <p>Height: {{ fighter_stats[0]['Height'] }}"</p>
+            <p>Weight Class: {{ fighter_stats[0]['weight_class'] }}</p>
+            <p>Place of Birth: {{ fighter_stats[0]['fighter_birth'] }}</p>
+        </div>
+        <div class="stats-section">
+            <div class="progress-ring-container">
+                <!-- Striking Accuracy Chart -->
+                <canvas id="strikingAccuracyChart1" width="80" height="80"></canvas>
+                <div class="progress-center">
+                    <p class="progress-value">{{ fighter_stats[0]['Striking Accuracy'] }}%</p>
+                    <p>Striking Accuracy</p>
+                </div>
+            </div>
+            <div class="progress-ring-container">
+                <!-- Takedown Accuracy Chart -->
+                <canvas id="takedownAccuracyChart1" width="80" height="80"></canvas>
+                <div class="progress-center">
+                    <p class="progress-value">{{ fighter_stats[0]['Takedown Accuracy'] }}%</p>
+                    <p>Takedown Accuracy</p>
+                </div>
+            </div>
+            <div class="progress-ring-container">
+                <!-- Takedown Defense Chart -->
+                <canvas id="takedownDefenseChart1" width="80" height="80"></canvas>
+                <div class="progress-center">
+                    <p class="progress-value">{{ fighter_stats[0]['Takedown Defense'] }}%</p>
+                    <p>Takedown Defense</p>
+                </div>
+            </div>
+            <div class="progress-ring-container">
+                <!-- Sig Str Defense Chart -->
+                <canvas id="sigstrdefChart1" width="80" height="80"></canvas>
+                <div class="progress-center">
+                    <p class="progress-value">{{ fighter_stats[0]['Sig Str Defense'] }}%</p>
+                    <p>Sig Str Defense</p>
+                </div>
+            </div>
+            <div class="additional-stats">
+                <p><strong>Takedown Avg:</strong> {{ fighter_stats[0]['Takedown Avg'] }} (per 15 min)</p>
+                <p><strong>Sig Str Landed:</strong> {{ fighter_stats[0]['Sig Str Landed'] }} (per min)</p>
+                <p><strong>Avg Fight Time:</strong> {{ fighter_stats[0]['Avg Fight Time'] }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="fighter-info">
+        <div class="fighter-section">
+            <img src="{{ fighter_image_urls[1] }}" alt="Fighter 2 Image" class="fighter-image">
+        </div>
+        <div class="info-section">
+            <h2>{{ fighter_stats[1]['fighter_name'] }}</h2>
+            <p>Age: {{ fighter_stats[1]['age'] }}</p>
+            <p>Reach: {{ fighter_stats[1]['Reach'] }}"</p>
+            <p>Height: {{ fighter_stats[1]['Height'] }}"</p>
+            <p>Weight Class: {{ fighter_stats[1]['weight_class'] }}</p>
+            <p>Place of Birth: {{ fighter_stats[1]['fighter_birth'] }}</p>
+        </div>
+        <div class="stats-section">
+            <div class="progress-ring-container">
+                <!-- Striking Accuracy Chart -->
+                <canvas id="strikingAccuracyChart2" width="80" height="80"></canvas>
+                <div class="progress-center">
+                    <p class="progress-value">{{ fighter_stats[1]['Striking Accuracy'] }}%</p>
+                    <p>Striking Accuracy</p>
+                </div>
+            </div>
+            <div class="progress-ring-container">
+                <!-- Takedown Accuracy Chart -->
+                <canvas id="takedownAccuracyChart2" width="80" height="80"></canvas>
+                <div class="progress-center">
+                    <p class="progress-value">{{ fighter_stats[1]['Takedown Accuracy'] }}%</p>
+                    <p>Takedown Accuracy</p>
+                </div>
+            </div>
+            <div class="progress-ring-container">
+                <!-- Takedown Defense Chart -->
+                <canvas id="takedownDefenseChart2" width="80" height="80"></canvas>
+                <div class="progress-center">
+                    <p class="progress-value">{{ fighter_stats[1]['Takedown Defense'] }}%</p>
+                    <p>Takedown Defense</p>
+                </div>
+            </div>
+            <div class="progress-ring-container">
+                <!-- Sig Str Defense Chart -->
+                <canvas id="sigstrdefChart2" width="80" height="80"></canvas>
+                <div class="progress-center">
+                    <p class="progress-value">{{ fighter_stats[1]['Sig Str Defense'] }}%</p>
+                    <p>Sig Str Defense</p>
+                </div>
+            </div>
+            <div class="additional-stats">
+                <p><strong>Takedown Avg:</strong> {{ fighter_stats[1]['Takedown Avg'] }} (per 15 mins)</p>
+                <p><strong>Sig Str Landed:</strong> {{ fighter_stats[1]['Sig Str Landed'] }} (per min)</p>
+                <p><strong>Avg Fight Time:</strong> {{ fighter_stats[1]['Avg Fight Time'] }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="advantages-section">
+        <h3>Advantages:</h3>
+        <ul>
+            {% for advantage in fighter_advantages %}
+                {% if advantage['advantage'] != 'Equal' %}
+                    <li>
+                        {{ advantage['stat'] }}: {{ advantage['advantage'] }} 
+                        {% if advantage['stat'] == 'height' %}
+                            (by {{ advantage['difference']|round(2) }} inch{% if advantage['difference']|round(2) != 1 %}es{% endif %})
+                        {% else %}
+                            (by {{ advantage['difference']|round(2) }})
+                        {% endif %}
+                    </li>
+                {% else %}
+                    <li>{{ advantage['stat'] }}: {{ advantage['advantage'] }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    <script>
+        var strikingAccuracy1 = {{ fighter_stats[0]['Striking Accuracy'] }};
+        var strikingAccuracy2 = {{ fighter_stats[1]['Striking Accuracy'] }};
+        var takedownAccuracy1 = {{ fighter_stats[0]['Takedown Accuracy'] }};
+        var takedownAccuracy2 = {{ fighter_stats[1]['Takedown Accuracy'] }};
+        var takedownDefense1 = {{ fighter_stats[0]['Takedown Defense'] }};
+        var takedownDefense2 = {{ fighter_stats[1]['Takedown Defense'] }};
+        var sigstrdef1 = {{ fighter_stats[0]['Sig Str Defense'] }};
+        var sigstrdef2 = {{ fighter_stats[1]['Sig Str Defense'] }};
+        
+        // Chart for Fighter 1 Striking Accuracy
+        var ctxStriking1 = document.getElementById('strikingAccuracyChart1').getContext('2d');
+        var chartStriking1 = new Chart(ctxStriking1, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [strikingAccuracy1, 100 - strikingAccuracy1],
+                    backgroundColor: ['#007bff', '#f5f5f5'],
+                    borderColor: '#f5f5f5',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                cutoutPercentage: 80,
+                rotation: -Math.PI,
+                responsive: false,
+                maintainAspectRatio: false,
+                tooltips: {
+                    enabled: false
+                },
+                legend: {
+                    display: false
+                },
+                animation: {
+                    animateRotate: false,
+                    animateScale: true
+                }
+            }
+        });
+
+        // Chart for Fighter 2 Striking Accuracy
+        var ctxStriking2 = document.getElementById('strikingAccuracyChart2').getContext('2d');
+        var chartStriking2 = new Chart(ctxStriking2, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [strikingAccuracy2, 100 - strikingAccuracy2],
+                    backgroundColor: ['#007bff', '#f5f5f5'],
+                    borderColor: '#f5f5f5',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                cutoutPercentage: 80,
+                rotation: -Math.PI,
+                responsive: false,
+                maintainAspectRatio: false,
+                tooltips: {
+                    enabled: false
+                },
+                legend: {
+                    display: false
+                },
+                animation: {
+                    animateRotate: false,
+                    animateScale: true
+                }
+            }
+        });
+
+        // Chart for Fighter 1 Takedown Accuracy
+        var ctxTakedown1 = document.getElementById('takedownAccuracyChart1').getContext('2d');
+        var chartTakedown1 = new Chart(ctxTakedown1, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [takedownAccuracy1, 100 - takedownAccuracy1],
+                    backgroundColor: ['#007bff', '#f5f5f5'],
+                    borderColor: '#f5f5f5',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                cutoutPercentage: 80,
+                rotation: -Math.PI,
+                responsive: false,
+                maintainAspectRatio: false,
+                tooltips: {
+                    enabled: false
+                },
+                legend: {
+                    display: false
+                },
+                animation: {
+                    animateRotate: false,
+                    animateScale: true
+                }
+            }
+        });
+
+        // Chart for Fighter 2 Takedown Accuracy
+        var ctxTakedown2 = document.getElementById('takedownAccuracyChart2').getContext('2d');
+        var chartTakedown2 = new Chart(ctxTakedown2, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [takedownAccuracy2, 100 - takedownAccuracy2],
+                    backgroundColor: ['#007bff', '#f5f5f5'],
+                    borderColor: '#f5f5f5',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                cutoutPercentage: 80,
+                rotation: -Math.PI,
+                responsive: false,
+                maintainAspectRatio: false,
+                tooltips: {
+                    enabled: false
+                },
+                legend: {
+                    display: false
+                },
+                animation: {
+                    animateRotate: false,
+                    animateScale: true
+                }
+            }
+        });
+
+        // Chart for Fighter 1 Takedown Defense
+        var ctxTakedownDefense1 = document.getElementById('takedownDefenseChart1').getContext('2d');
+        var chartTakedownDefense1 = new Chart(ctxTakedownDefense1, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [takedownDefense1, 100 - takedownDefense1],
+                    backgroundColor: ['#007bff', '#f5f5f5'],
+                    borderColor: '#f5f5f5',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                cutoutPercentage: 80,
+                rotation: -Math.PI,
+                responsive: false,
+                maintainAspectRatio: false,
+                tooltips: {
+                    enabled: false
+                },
+                legend: {
+                    display: false
+                },
+                animation: {
+                    animateRotate: false,
+                    animateScale: true
+                }
+            }
+        });
+
+        // Chart for Fighter 2 Takedown Defense
+        var ctxTakedownDefense2 = document.getElementById('takedownDefenseChart2').getContext('2d');
+        var chartTakedownDefense2 = new Chart(ctxTakedownDefense2, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [takedownDefense2, 100 - takedownDefense2],
+                    backgroundColor: ['#007bff', '#f5f5f5'],
+                    borderColor: '#f5f5f5',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                cutoutPercentage: 80,
+                rotation: -Math.PI,
+                responsive: false,
+                maintainAspectRatio: false,
+                tooltips: {
+                    enabled: false
+                },
+                legend: {
+                    display: false
+                },
+                animation: {
+                    animateRotate: false,
+                    animateScale: true
+                }
+            }
+        });
+
+        // Chart for Fighter 1 Sig Str Def 
+        var ctxSigStrDef1 = document.getElementById('sigstrdefChart1').getContext('2d');
+        var chartSigStrDef1 = new Chart(ctxSigStrDef1, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [sigstrdef1, 100 - sigstrdef1],
+                    backgroundColor: ['#007bff', '#f5f5f5'],
+                    borderColor: '#f5f5f5',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                cutoutPercentage: 80,
+                rotation: -Math.PI,
+                responsive: false,
+                maintainAspectRatio: false,
+                tooltips: {
+                    enabled: false
+                },
+                legend: {
+                    display: false
+                },
+                animation: {
+                    animateRotate: false,
+                    animateScale: true
+                }
+            }
+        });
+
+        // Chart for Fighter 2 Takedown Average
+        var ctxSigStrDef2 = document.getElementById('sigstrdefChart2').getContext('2d');
+        var chartSigStrDef2 = new Chart(ctxSigStrDef2, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [sigstrdef2, 100 - sigstrdef2],
+                    backgroundColor: ['#007bff', '#f5f5f5'],
+                    borderColor: '#f5f5f5',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                cutoutPercentage: 80,
+                rotation: -Math.PI,
+                responsive: false,
+                maintainAspectRatio: false,
+                tooltips: {
+                    enabled: false
+                },
+                legend: {
+                    display: false
+                },
+                animation: {
+                    animateRotate: false,
+                    animateScale: true
+                }
+            }
+        });
+    </script>
+    {% endif %}
+</body>
+</html>
