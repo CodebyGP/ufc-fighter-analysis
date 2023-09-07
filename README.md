@@ -7,7 +7,7 @@ You can access the live version of this application (https://fighter-comparison-
 
 ## Features
 
-- Compare statistics of two UFC fighters.
+- Compare statistics of UFC fighters.
 - View advantages in various categories (e.g., height, reach, age, etc.).
 - Explore detailed rankings for each weight class and champions.
 
