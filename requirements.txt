@@ -13,7 +13,7 @@ colorgram.py==1.2.0
 cycler==0.11.0
 emoji==1.7.0
 exceptiongroup==1.1.0
-Flask==2.3.2
+Flask==2.2.5
 Flask-Login==0.6.2
 Flask-SQLAlchemy==3.0.5
 fonttools==4.42.0
